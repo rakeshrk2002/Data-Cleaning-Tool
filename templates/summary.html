@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Processing Summary</h1>
+    <p><strong>Rows:</strong> {{ summary.rows }}</p>
+    <p><strong>Columns:</strong> {{ summary.columns }}</p>
+    <h2>Operations Applied:</h2>
+    <ul>
+        {% for op in summary.operations %}
+            <li>{{ op }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Data Preview:</h2>
+    <div class="table-container">
+        {{ summary.preview | safe }}
+    </div>
+    <a href="{{ url_for('download_file', id=id) }}">Download Prepared Data</a>
+</body>
+</html>

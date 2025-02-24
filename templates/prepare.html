@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prepare Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Configure Data Preparation</h1>
+    <form method="POST" action="{{ url_for('process_data', id=id) }}">
+        <h2>Drop Columns</h2>
+        {% for col in columns %}
+            <label>
+                <input type="checkbox" name="drop_cols" value="{{ col }}"> {{ col }}
+            </label><br>
+        {% endfor %}
+
+        <h2>Remove Duplicates</h2>
+        <label>
+            <input type="checkbox" name="remove_duplicates"> Remove duplicate rows
+        </label><br>
+
+        <h2>Column Operations</h2>
+        {% for col in columns %}
+            <h3>{{ col }} ({{ col_types[col] }})</h3>
+            <label>Missing Values:</label>
+            <select name="{{ col }}_missing" class="missing-select">
+                <option value="none">None</option>
+                {% if col_types[col] == 'numerical' %}
+                    <option value="mean">Mean</option>
+                    <option value="median">Median</option>
+                {% endif %}
+                <option value="mode">Mode</option>
+                <option value="constant">Constant</option>
+            </select>
+            <input type="text" name="{{ col }}_constant_value" class="constant-input" placeholder="Value for constant" style="display:none;"><br>
+
+            {% if col_types[col] == 'categorical' %}
+                <label>Encoding:</label>
+                <select name="{{ col }}_encoding">
+                    <option value="none">None</option>
+                    <option value="onehot">One-Hot</option>
+                    <option value="label">Label</option>
+                </select><br>
+            {% endif %}
+        {% endfor %}
+
+        <h2>Scaling</h2>
+        <label>Scale all numerical columns:</label>
+        <select name="scaling">
+            <option value="none">None</option>
+            <option value="standard">Standard Scaling</option>
+            <option value="minmax">Min-Max Scaling</option>
+        </select><br>
+
+        <input type="submit" value="Apply Operations">
+    </form>
+
+    <script>
+        document.querySelectorAll('.missing-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const col = this.name.split('_')[0];
+                const input = document.querySelector(`input[name="${col}_constant_value"]`);
+                if (this.value === 'constant') {
+                    input.style.display = 'inline';
+                } else {
+                    input.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
