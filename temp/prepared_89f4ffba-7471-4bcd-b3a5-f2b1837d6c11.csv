@@ -1,0 +1,13 @@
+ID,Name,Age,Salary,Experience,Joining_Date,Gender,Department_Finance,Department_HR,Department_IT
+1.0,Alice,25.0,50000.0,2.0,2020-06-15,0,False,False,True
+2.0,Bob,30.0,60000.0,5.0,2018-09-10,1,False,True,False
+3.0,Charlie,35.0,64000.0,7.0,2016-04-22,1,True,False,False
+4.0,David,40.0,80000.0,10.0,2012-11-05,1,False,False,True
+5.0,Eva,29.0,55000.0,3.0,2021-01-12,0,False,True,False
+6.0,Frank,31.0,65000.0,2.0,2019-07-08,1,True,False,False
+7.0,Grace,31.818181818181817,70000.0,8.0,2015-03-19,0,False,False,True
+8.0,Hank,45.0,90000.0,15.0,2010-08-25,1,False,True,False
+9.0,Ivy,27.0,52000.0,4.0,2019-05-30,0,False,False,True
+10.0,Jack,33.0,72000.0,6.0,2017-12-14,1,True,False,False
+11.0,Alice,25.0,50000.0,2.0,2020-06-15,0,False,False,True
+12.0,Bob,30.0,60000.0,5.0,2018-09-10,1,False,True,False
