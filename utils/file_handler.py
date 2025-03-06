@@ -23,6 +23,6 @@ def load_csv(id, upload_folder):
 
 def get_column_types(df):
     
-    # Returns the type of the column in the UI (eg: Age(numerical), Name(Categorical) )
+    # Shows the type of the column in the UI (eg: Age(numerical), Name(Categorical) )
 
     return {col: 'numerical' if pd.api.types.is_numeric_dtype(df[col]) else 'categorical' for col in df.columns}

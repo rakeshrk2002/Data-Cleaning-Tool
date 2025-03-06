@@ -1,10 +1,10 @@
 import pandas as pd
+from sklearn.experimental import enable_iterative_imputer
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
-
+from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer
 
 # This function helps in processing the data
 def process_dataframe(df, form_data):
-
     operations_applied = []
 
     # Drops selected columns
@@ -20,10 +20,10 @@ def process_dataframe(df, form_data):
         final_rows = df.shape[0]
         operations_applied.append(f"Removed {initial_rows - final_rows} duplicate rows")
 
-    # Determines the column type based on the given daataset
+    # Determines the column type based on the given dataset
     col_types = {col: 'numerical' if pd.api.types.is_numeric_dtype(df[col]) else 'categorical' for col in df.columns}
 
-    # Handle missing values and will do encoding based on the user inputs
+    # Handle missing values and encoding based on user inputs
     for col in df.columns:
         missing_method = form_data.get(f'{col}_missing')
         if missing_method and missing_method != 'none':
@@ -40,18 +40,30 @@ def process_dataframe(df, form_data):
                 df[col].fillna(form_data.get(f'{col}_constant_value', ''), inplace=True)
                 operations_applied.append(f"Filled missing values in '{col}' with a constant value")
 
-        # For encoding categorical columns
+        # Advanced Missing Value Handling (KNN & Iterative Imputer)
+        advanced_missing = form_data.get(f'{col}_advanced_missing')
+        if advanced_missing and advanced_missing != 'none' and col_types[col] == 'numerical':
+            if advanced_missing == 'knn':
+                imputer = KNNImputer()
+                df[[col]] = imputer.fit_transform(df[[col]])
+                operations_applied.append(f"Applied KNN Imputer to '{col}'")
+            elif advanced_missing == 'iterative':
+                imputer = IterativeImputer()
+                df[[col]] = imputer.fit_transform(df[[col]])
+                operations_applied.append(f"Applied Iterative Imputer to '{col}'")
+
+        # Encoding for categorical columns
         encoding = form_data.get(f'{col}_encoding', 'none')
         if col_types[col] == 'categorical':
             if encoding == 'onehot':
                 df = pd.get_dummies(df, columns=[col], prefix=col)
                 operations_applied.append(f"One-hot encoded '{col}'")
             elif encoding == 'label':
-                le = LabelEncoder()
-                df[col] = le.fit_transform(df[col].astype(str))
+                label_enc = LabelEncoder()
+                df[col] = label_enc.fit_transform(df[col].astype(str))
                 operations_applied.append(f"Label encoded '{col}'")
 
-    # scaling the data 
+    # Scaling the data 
     scaling = form_data.get('scaling')
     if scaling and scaling != 'none':
         numerical_cols = df.select_dtypes(include=['number']).columns

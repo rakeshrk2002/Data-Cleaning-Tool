@@ -42,6 +42,15 @@
                     <option value="label">Label</option>
                 </select><br>
             {% endif %}
+
+            {% if col_types[col] == 'numerical' %}
+                <label>Advanced Missing Value Handling:</label>
+                <select name="{{ col }}_advanced_missing">
+                    <option value="none">None</option>
+                    <option value="knn">KNN Imputer</option>
+                    <option value="iterative">Iterative Imputer</option>
+                </select><br>
+            {% endif %}
         {% endfor %}
 
         <h2>Scaling</h2>

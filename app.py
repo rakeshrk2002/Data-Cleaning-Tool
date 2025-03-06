@@ -44,7 +44,7 @@ def prepare_data(id):
 
 @app.route('/process/<id>', methods=['POST'])
 def process_data(id):
-    """Apply selected processing operations on the data."""
+    """Apply selected processing operations on the data"""
     df, error = load_csv(id, app.config['UPLOAD_FOLDER'])
     if error:
         return error, 404
@@ -62,7 +62,7 @@ def process_data(id):
 
 @app.route('/download/<id>')
 def download_file(id):
-    """Download the processed CSV file."""
+    """Download the processed CSV file"""
     from flask import send_file
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], f'prepared_{id}.csv')
     return send_file(file_path, as_attachment=True, download_name='prepared_data.csv') if os.path.exists(file_path) else ("Prepared file not found", 404)
