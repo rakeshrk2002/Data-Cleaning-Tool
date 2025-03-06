@@ -13,12 +13,12 @@ def process_dataframe(df, form_data):
         df.drop(columns=drop_cols, inplace=True)
         operations_applied.append(f"Dropped columns: {', '.join(drop_cols)}")
 
-    # Remove duplicates from the selected column 
-    if form_data.get('remove_duplicates') == 'on':
-        initial_rows = df.shape[0]
-        df.drop_duplicates(inplace=True)
-        final_rows = df.shape[0]
-        operations_applied.append(f"Removed {initial_rows - final_rows} duplicate rows")
+    # Remove specified rows by index
+    remove_indices = form_data.get('remove_indices', '')
+    if remove_indices:
+        indices = list(map(int, remove_indices.split(',')))
+        df.drop(index=indices, inplace=True, errors='ignore')
+        operations_applied.append(f"Removed rows with indices: {', '.join(map(str, indices))}")
 
     # Determines the column type based on the given dataset
     col_types = {col: 'numerical' if pd.api.types.is_numeric_dtype(df[col]) else 'categorical' for col in df.columns}

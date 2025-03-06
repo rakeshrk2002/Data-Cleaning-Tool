@@ -3,6 +3,7 @@ import os
 import uuid
 from utils.file_handler import save_uploaded_file, load_csv, get_column_types
 from utils.data_processing import process_dataframe
+import pandas as pd
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'temp'
@@ -10,7 +11,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 @app.route('/')
 def index():
-    """Render the upload page."""
+    """Renders the upload page."""
     return render_template('upload.html')
 
 @app.route('/upload', methods=['POST'])
@@ -40,7 +41,13 @@ def prepare_data(id):
     df, error = load_csv(id, app.config['UPLOAD_FOLDER'])
     if error:
         return error, 404
-    return render_template('prepare.html', columns=df.columns.tolist(), col_types=get_column_types(df), id=id)
+    return render_template(
+        'prepare.html',
+        columns=df.columns.tolist(),
+        col_types=get_column_types(df),
+        data=df.to_dict(orient='records'),
+        id=id
+    )
 
 @app.route('/process/<id>', methods=['POST'])
 def process_data(id):
@@ -48,6 +55,11 @@ def process_data(id):
     df, error = load_csv(id, app.config['UPLOAD_FOLDER'])
     if error:
         return error, 404
+
+    edited_data = request.form.get('editedData')
+    if edited_data:
+        import json
+        df = pd.DataFrame(json.loads(edited_data))
 
     processed_df, operations = process_dataframe(df, request.form)
     processed_file_path = os.path.join(app.config['UPLOAD_FOLDER'], f'prepared_{id}.csv')
@@ -59,6 +71,7 @@ def process_data(id):
         'operations': operations if operations else ["No operations applied"],
         'preview': processed_df.to_html(classes='data-table')
     }, id=id)
+
 
 @app.route('/download/<id>')
 def download_file(id):
